@@ -1,8 +1,8 @@
-import retrieveVerificationCode from './retrieveVerificationCode';
-import startSmsHandling from './startSmsHandling';
-import useSmsUserConsent from './hooks/useSmsUserConsent';
-import addErrorListener from './addErrorListener';
-import useErrorListener from './hooks/useErrorListener';
+import retrieveVerificationCode from "./retrieveVerificationCode";
+import startSmsHandling, { stopSmsHandling } from "./startSmsHandling";
+import useSmsUserConsent from "./hooks/useSmsUserConsent";
+import addErrorListener from "./addErrorListener";
+import useErrorListener from "./hooks/useErrorListener";
 
 export {
   retrieveVerificationCode,
@@ -10,6 +10,7 @@ export {
   useSmsUserConsent,
   addErrorListener,
   useErrorListener,
+  stopSmsHandling,
 };
 
 export default {
@@ -18,4 +19,5 @@ export default {
   useSmsUserConsent,
   addErrorListener,
   useErrorListener,
+  stopSmsHandling,
 };
