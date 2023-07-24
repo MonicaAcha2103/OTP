@@ -1,9 +1,9 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, Button } from "react-native";
 
 import ReactComp from "./ReactComp";
-import { startSmsHandling, useSmsUserConsent } from "./src";
+import { startSmsHandling, stopSmsHandling } from "./src";
 
 function retrieveVerificationCode(sms) {
   const codeRegExp = /\d{6}/m;
@@ -13,28 +13,41 @@ function retrieveVerificationCode(sms) {
 
 export default function App() {
   const [code, setCode] = useState();
-  const retrievedCode = useSmsUserConsent();
-  const [data, setShowData] = useState(false);
+  const [showData, setShowData] = useState(false);
 
-  useEffect(() => {
-    if (retrievedCode) setCode(retrievedCode);
-  }, [retrievedCode]);
+  const startSmsListner = useCallback(() => {
+    console.log("$$$ startSmsHandling");
+    startSmsHandling((event) => {
+      console.log("$$$ event received");
 
-  const startSmsCallback = useCallback(() => {
-    return startSmsHandling((event) => {
-      const retrievedCode = retrieveVerificationCode(event?.sms);
+      const receivedSms = event?.sms;
+      if (!receivedSms) {
+        console.warn("No SMS received!");
+        return;
+      }
+
+      const retrievedCode = retrieveVerificationCode(receivedSms, 6);
+      if (!retrievedCode) {
+        console.warn("No code retrieved!");
+        return;
+      }
+
       setCode(retrievedCode);
     });
   }, []);
 
   return (
     <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-      <Button title="Test" onPress={() => setShowData(true)} />
-      {data && (
+      <Text style={{ fontSize: 20, fontWeight: 600 }}>
+        Testing OTP Auto Read Flow
+      </Text>
+      {!showData && (
+        <Button title="Show OTP Input" onPress={() => setShowData(true)} />
+      )}
+      {showData && (
         <ReactComp
-          startSmsCallback={startSmsCallback}
+          startSmsListner={startSmsListner}
+          stopSmsListner={stopSmsHandling}
           code={code}
           setCode={setCode}
         />
@@ -45,9 +58,10 @@ export default function App() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.5,
+    height: 300,
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    justifyContent: "space-between",
   },
 });

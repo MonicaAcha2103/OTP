@@ -1,19 +1,28 @@
 import React, { forwardRef, useEffect } from "react";
-import { TextInput, View, Text } from "react-native";
+import { TextInput, View, Text, Button } from "react-native";
 
 const ReactComp = forwardRef((props, ref) => {
-  const { startSmsCallback, code, setCode } = props;
-  console.log("ReactComp", props);
+  const { startSmsListner, code, setCode, stopSmsListner } = props;
 
   useEffect(() => {
-    const stopSmsListener = startSmsCallback();
-    return stopSmsListener;
+    startSmsListner();
   }, []);
 
   return (
-    <View>
-      <Text>ReactComp</Text>
-      <TextInput value={code} onChangeText={setCode} />
+    <View
+      style={{
+        justifyContent: "space-around",
+        flex: 1,
+      }}
+    >
+      <Text>SMS Input</Text>
+      <TextInput
+        value={code}
+        onChangeText={setCode}
+        style={{ borderColor: "black", borderWidth: 2, width: 200 }}
+      />
+
+      <Button title="Stop SMS Listner" onPress={() => stopSmsListner()} />
     </View>
   );
 });

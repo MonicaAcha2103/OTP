@@ -29,16 +29,22 @@ This part uses the native SMS User Consent API to show the consent prompt and re
 This part emits an event to JS side with the SMS using default React Native event emitter, so that JS side is able to subscribe to the event and receive the SMS.
 */
 
+let jsListener;
+export const stopSmsHandling = () => {
+  stopNativeSmsListener();
+  jsListener?.remove();
+};
+
 export default function startSmsHandling(onSmsReceived) {
   startNativeSmsListener();
-  const jsListener = eventEmitter.addListener(
+  jsListener = eventEmitter.addListener(
     Events.AKV_SMS_RETRIEVED,
     onSmsReceived
   );
 
   function stopSmsHandling() {
     stopNativeSmsListener();
-    jsListener.remove();
+    jsListener?.remove();
   }
 
   return stopSmsHandling;
